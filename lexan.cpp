@@ -3,10 +3,13 @@
 #include    <cctype>
 #include    "token.h"
 #include    "functions.h"
-
+#include "direct.h"
 extern ifstream ifs;                        // input file stream to read from
 extern SymTab   symtab;                     // global symbol table
 extern string outputFileName;
+
+/* ALERT: Using the same format, enter the full path to the directory containing the input/output files. */
+string ROOTPATH = "\\\\engvault01.eng.fau.edu\\palmerjoshua2013$\\profile_documents\\My Documents\\Compiler_Project\\";
 
 static int lineno = 1;                      // static var to remember line no.
 
@@ -90,7 +93,8 @@ void init_kws( )                            // init keywords/ids in symtab
 }
 
 string getRootPath() {
-	string filePath = __FILE__;
+	string filePath = string(_getcwd(NULL, 0));
+
 	int length = filePath.length();
 	for (int i = length - 1; i >= 0; i--) {
 		if (filePath[i] == '\\') {
@@ -104,7 +108,7 @@ string generateOutputFileName(string &inputFileName) {
 	int length = inputFileName.length();
 	for (int i = length-1; i >= 0; i--) {
 		if (inputFileName[i] == '-') {
-			return "out" + inputFileName.substr(i, length-i);
+			return ROOTPATH + inputFileName.substr(i, length-i);
 		}
 	}
 	return "output.txt";
@@ -116,14 +120,14 @@ ifstream get_ifs( )                         // get input file stream
 
     cout << "Enter input file name: ";
     cin  >> filename;
-	string fullPath = getRootPath() + filename;
-	ifstream ifs(fullPath);
+	filename = ROOTPATH + filename;
+	ifstream ifs(filename);
 
     if( ! ifs )                             // cannot open file infilen
     {
-		throw domain_error("Cannot open input file: " + fullPath);
+		throw domain_error("Cannot open input file: " + filename);
     }
-	cout << "Successfully read input file: " + fullPath << endl << endl;
+	cout << "Successfully read input file: " + filename << endl << endl;
 	outputFileName = generateOutputFileName(filename);
     return ifs;                             // return input file stream
 }

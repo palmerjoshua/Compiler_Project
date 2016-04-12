@@ -159,7 +159,7 @@ string Statement() {
 	string assign = As();
 	string expr = Expr();
 	string sc = Sc();
-	return inToPostFix(v + assign + expr) + sc;
+	return v + assign + expr + sc;
 }
 
 vector<string> StatementList() {
@@ -176,12 +176,13 @@ void run(string begin, vector<string> statements, string end) {
 	All this does is write to the output file.
 	*/
 
-	string fullPath = getRootPath() + outputFileName;
+	string fullPath = outputFileName;
 	ofstream os(fullPath);
 	if (os.is_open()) {
 		os << begin << endl;
 		cout << begin << endl;
 		for (string statement : statements) {
+			statement = inToPostFix(statement);
 			os << statement << endl;
 			cout << statement << endl;
 		}
@@ -268,7 +269,7 @@ void error( int t, int expt, const string &str )
 
     cerr << "\nsyntax error.\n";
 
-    exit( waitForKey(1) );
+    exit( 1 );
 }
 
 
@@ -291,10 +292,10 @@ int main()
 		ifs = get_ifs();
 		init_kws();
 		prog();
-		return waitForKey(0);
+		return 0;
 	}
 	catch (domain_error &e) {
 		cout << e.what() << endl;
-		return waitForKey(-1);
+		return -1;
 	}
 }
